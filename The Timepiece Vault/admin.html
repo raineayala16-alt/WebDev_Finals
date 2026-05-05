@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<head>
+    <title>Feedback Dashboard</title>
+    <link rel="stylesheet" href="admin.css">
+
+</head>
+<body>
+
+<div class="container">
+
+    <aside class="sidebar">
+        <div class="back-btn">←</div>
+
+        <ul class="menu">
+            <li class="active"><img src="user.png" alt="User" class="menu-icon"> User Management</li>
+            <li><img src="watch.png" alt="Product" class="menu-icon"> Product Management</li>
+            <li><img src="overview.png" alt="Admin" class="menu-icon"> Admin Management</li>
+        </ul>
+
+        <div class="logout-btn" onclick="confirmLogout()">
+            <img src="logout.png" alt="Logout" class="menu-icon"> Log-Out
+        </div>
+    </aside>
+
+    <main class="main">
+
+        <div class="top-buttons" id="user-tabs">
+            <button id="feedback-tab" class="active-btn">Feedback</button>
+            <button id="ratings-tab" class="outline-btn">Ratings</button>
+        </div>
+
+        <div class="top-buttons" id="admin-tabs" style="display: none;">
+            <button id="overview-tab" class="active-btn">Site Overview</button>
+            <button id="analytics-tab" class="outline-btn">Analytics</button>
+            <button id="sales-tab" class="outline-btn">Sales</button>
+        </div>
+
+        <div class="cards">
+            <div class="card">
+                <p>"The website looks premium and easy to use. My order was smooth and payment was secured."</p>
+                <span>From: James Carter • March 21, 2026</span>
+            </div>
+
+            <div class="card">
+                <p>"The website looks premium and easy to use. My order was smooth and payment was secured."</p>
+                <span>From: James Carter • February 19, 2026</span>
+            </div>
+
+            <div class="card">
+                <p>"The website looks premium and easy to use. My order was smooth and payment was secured."</p>
+                <span>From: James Carter • April 03, 2026</span>
+            </div>
+
+            <div class="card">
+                <p>"The website looks premium and easy to use. My order was smooth and payment was secured."</p>
+                <span>From: James Carter • January 31, 2026</span>
+            </div>
+
+            <div class="card">
+                <p>"The website looks premium and easy to use. My order was smooth and payment was secured."</p>
+                <span>From: James Carter • May 05, 2026</span>
+            </div>
+
+            <div class="card">
+                <p>"The website looks premium and easy to use. My order was smooth and payment was secured."</p>
+                <span>From: James Carter • May 05, 2026</span>
+            </div>
+        </div>
+
+    </main>
+
+</div>
+
+<div id="logout-modal" class="modal">
+    <div class="modal-content">
+        <h2>Logout Confirmation</h2>
+        <p>Are you sure you want to log out as admin?</p>
+        <div class="modal-buttons">
+            <button class="confirm-logout-btn" onclick="processLogout()">Logout</button>
+            <button class="cancel-logout-btn" onclick="closeLogoutModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const logoutModal = document.getElementById('logout-modal');
+
+    function confirmLogout() {
+        logoutModal.style.display = 'block';
+    }
+
+    function closeLogoutModal() {
+        logoutModal.style.display = 'none';
+    }
+
+    function processLogout() {
+        window.location.href = "login.html";
+    }
+
+    window.onclick = function(event) {
+        if (event.target == logoutModal) {
+            closeLogoutModal();
+        }
+    }
+
+    document.querySelector('.back-btn').onclick = () => {
+        window.location.href = "index.html";
+    };
+
+    const userTabs = document.getElementById('user-tabs');
+    const adminTabs = document.getElementById('admin-tabs');
+    const feedbackTab = document.getElementById('feedback-tab');
+    const ratingsTab = document.getElementById('ratings-tab');
+    const overviewTab = document.getElementById('overview-tab');
+    const analyticsTab = document.getElementById('analytics-tab');
+    const salesTab = document.getElementById('sales-tab');
+    const cardsContainer = document.querySelector('.cards');
+    document.querySelectorAll('.menu li').forEach(item => {
+        item.onclick = () => {
+            document.querySelectorAll('.menu li').forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+
+            const section = item.innerText.trim();
+
+            if (section === "User Management") {
+                userTabs.style.display = 'flex';
+                adminTabs.style.display = 'none';
+                feedbackTab.click(); 
+            } else if (section === "Product Management") {
+                userTabs.style.display = 'none';
+                adminTabs.style.display = 'none';
+                renderProducts();
+            } else if (section === "Admin Management") {
+                userTabs.style.display = 'none';
+                adminTabs.style.display = 'flex';
+                overviewTab.click();
+            } else {
+                userTabs.style.display = 'none';
+                adminTabs.style.display = 'none';
+                cardsContainer.innerHTML = '<div style="text-align: center; width: 100%; margin-top: 50px; opacity: 0.5;">Admin settings panel coming soon...</div>';
+            }
+        };
+    });
+
+    function clearTabs(container) {
+        container.querySelectorAll('button').forEach(btn => {
+            btn.classList.remove('active-btn');
+            btn.classList.add('outline-btn');
+        });
+    }
+
+    const productsData = [
+        { name: "GMT Master II", img: "gmt1.png", status: "Display" },
+        { name: "DateJust", img: "date5.png", status: "Display" },
+        { name: "Day Date", img: "day4.png", status: "On-Hold" },
+        { name: "Cosmograph Daytona", img: "cos6.png", status: "Display" },
+        { name: "Submariner", img: "sub1.png", status: "Display" },
+        { name: "Oyster Perpetual", img: "oys6.png", status: "On-Hold" }
+    ];
+
+    const originalFeedback = cardsContainer.innerHTML;
+
+    const highRatingsData = [
+        { name: "Sarah Lopez", stars: 5, date: "May 02, 2026" },
+        { name: "Michael Tan", stars: 4, date: "May 03, 2026" },
+        { name: "James Carter", stars: 5, date: "May 01, 2026" },
+        { name: "Daniel Reyes", stars: 5, date: "April 28, 2026" },
+        { name: "Nicole Santos", stars: 4, date: "April 25, 2026" },
+        { name: "Angela Dizon", stars: 5, date: "April 20, 2026" }
+    ];
+
+    ratingsTab.addEventListener('click', () => {
+        clearTabs(userTabs);
+        ratingsTab.classList.add('active-btn');
+        ratingsTab.classList.remove('outline-btn');
+
+        cardsContainer.innerHTML = highRatingsData.map(item => `
+            <div class="card" style="text-align: center; border-left: 4px solid #e5bf24;">
+                <h3 style="color: #e5bf24; margin-bottom: 8px; font-size: 18px;">${item.name}</h3>
+                <div style="font-size: 22px; color: #f5c56a; letter-spacing: 2px;">
+                    ${'★'.repeat(item.stars)}${'☆'.repeat(5 - item.stars)}
+                </div>
+                <p style="margin-top: 10px; font-size: 12px; opacity: 0.6; text-transform: uppercase;">Verified ${item.stars}-Star Rating • ${item.date}</p>
+            </div>
+        `).join('');
+    });
+
+    feedbackTab.addEventListener('click', () => {
+        clearTabs(userTabs);
+        feedbackTab.classList.add('active-btn');
+        feedbackTab.classList.remove('outline-btn');
+        cardsContainer.innerHTML = originalFeedback;
+    });
+
+    // Admin Management Tabs
+    overviewTab.addEventListener('click', () => {
+        clearTabs(adminTabs);
+        overviewTab.classList.add('active-btn');
+        overviewTab.classList.remove('outline-btn');
+        cardsContainer.innerHTML = `
+            <div class="card" style="text-align: center;">
+                <h3 style="color: #e5bf24; margin-bottom: 10px;">Total Users</h3>
+                <p style="font-size: 24px; font-weight: 700;">1,248</p>
+            </div>
+            <div class="card" style="text-align: center;">
+                <h3 style="color: #e5bf24; margin-bottom: 10px;">Active Sessions</h3>
+                <p style="font-size: 24px; font-weight: 700;">42</p>
+            </div>
+            <div class="card" style="text-align: center;">
+                <h3 style="color: #e5bf24; margin-bottom: 10px;">Pending Orders</h3>
+                <p style="font-size: 24px; font-weight: 700;">15</p>
+            </div>
+            <div class="card" style="grid-column: span 3; text-align: center; background: #000;">
+                <h3 style="color: #e5bf24; margin-bottom: 15px;">Monthly Performance Overview</h3>
+                <img src="site.png" alt="Site Performance Chart" style="width: 100%; max-width: 800px; height: auto; border-radius: 8px;">
+            </div>
+        `;
+    });
+
+    analyticsTab.addEventListener('click', () => {
+        clearTabs(adminTabs);
+        analyticsTab.classList.add('active-btn');
+        analyticsTab.classList.remove('outline-btn');
+        cardsContainer.innerHTML = `
+            <div class="card" style="grid-column: span 3; text-align: center; background: #000;">
+                <h3 style="color: #e5bf24; margin-bottom: 15px;">Customer Rating Trends</h3>
+                <img src="analytics.png" alt="Analytics Chart" style="width: 100%; max-width: 800px; height: auto; border-radius: 8px;">
+            </div>
+        `;
+    });
+
+    salesTab.addEventListener('click', () => {
+        clearTabs(adminTabs);
+        salesTab.classList.add('active-btn');
+        salesTab.classList.remove('outline-btn');
+        cardsContainer.innerHTML = `
+            <div class="card" style="text-align: center; border-bottom: 3px solid #e5bf24;">
+                <h3 style="color: #e5bf24; margin-bottom: 5px;">Total Revenue</h3>
+                <p style="font-size: 22px; font-weight: 700;">₱4,250,000</p>
+            </div>
+            <div class="card" style="text-align: center; border-bottom: 3px solid #e5bf24;">
+                <h3 style="color: #e5bf24; margin-bottom: 5px;">This Month</h3>
+                <p style="font-size: 22px; font-weight: 700;">₱820,000</p>
+            </div>
+            <div class="card" style="grid-column: span 3; text-align: center; background: #000;">
+                <h3 style="color: #e5bf24; margin-bottom: 15px;">Sales Conversion Radar</h3>
+                <img src="sales.png" alt="Sales Chart" style="width: 100%; max-width: 600px; height: auto; border-radius: 8px;">
+            </div>
+        `;
+    });
+
+    function renderProducts() {
+        cardsContainer.innerHTML = productsData.map((p, index) => `
+            <div class="card product-card">
+                <img src="${p.img}" alt="${p.name}">
+                <h3 style="font-size: 16px; margin-bottom: 5px; color: #f5f5dc;">${p.name}</h3>
+                <button class="status-btn ${p.status === 'Display' ? 'status-display' : 'status-onhold'}" 
+                        onclick="toggleStatus(${index})">
+                    ${p.status}
+                </button>
+            </div>
+        `).join('');
+    }
+
+    window.toggleStatus = (index) => {
+        productsData[index].status = productsData[index].status === 'Display' ? 'On-Hold' : 'Display';
+        renderProducts();
+    };
+</script>
+
+<style>
+        .menu-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            vertical-align: middle;
+        }
+        .logout-btn .menu-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 3000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+        }
+        .modal-content {
+            background-color: #121212;
+            margin: 15% auto;
+            padding: 30px;
+            border: 1px solid #e5bf24;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 15px;
+            color: #f5f5dc;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            animation: modalFadeIn 0.3s ease-out;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .modal-content h2 { color: #e5bf24; margin-bottom: 15px; font-size: 24px; }
+        .modal-content p { margin-bottom: 25px; opacity: 0.9; font-size: 16px; }
+        .modal-buttons { display: flex; gap: 15px; justify-content: center; }
+        .confirm-logout-btn, .cancel-logout-btn {
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            flex: 1;
+            font-family: 'DM Sans', sans-serif;
+        }
+        .confirm-logout-btn { background: #ff4b2b; color: white; border: none; }
+        .confirm-logout-btn:hover { background: #ff310d; transform: scale(1.02); }
+        .cancel-logout-btn { background: transparent; color: #e5bf24; border: 1px solid #e5bf24; }
+        .cancel-logout-btn:hover { background: rgba(229, 191, 36, 0.1); }
+        
+        .back-btn { cursor: pointer; transition: 0.3s; }
+        .back-btn:hover { color: #e5bf24; transform: translateX(-5px); }
+        .menu li { cursor: pointer; transition: 0.2s; }
+        .menu li:hover:not(.active) { background: rgba(255,255,255,0.05); }
+
+        .product-card { text-align: center; }
+        .product-card img { width: 80px; height: auto; margin-bottom: 10px; }
+        .status-btn { padding: 8px 20px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.3s; width: 100%; margin-top: 15px; border: 1px solid #e5bf24; }
+        .status-display { background: #e5bf24; color: #000; }
+        .status-onhold { background: transparent; color: #e5bf24; }
+    </style>
+
+</body>
+</html>

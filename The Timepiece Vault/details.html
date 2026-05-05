@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<head>
+    <title>Watch Straps</title>
+    <link rel="stylesheet" href="details.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+<a href="index.html" class="back-button" title="Return to Home Page">←</a>
+
+<div class="component-switcher">
+    <button onclick="showComponent('straps')" id="btn-straps" class="switcher-btn">Straps</button>
+    <button onclick="showComponent('bezels')" id="btn-bezels" class="switcher-btn">Bezels</button>
+    <button onclick="showComponent('markers')" id="btn-markers" class="switcher-btn">Markers</button>
+</div>
+
+<div id="straps-group" class="component-group">
+    <section class="top-section">
+        <img src="strap.png" class="full-strap-img" alt="Rolex Watch Straps">
+        <div class="strap-labels">
+            <span>Jubilee</span>
+            <span>President</span>
+            <span>Oyster</span>
+            <span>Flat Jubilee</span>
+            <span>OysterFlex</span>
+        </div>
+    </section>
+
+    <section class="bottom-section">
+        <div class="content">
+            <h1>Different Types of Strap</h1>
+            <p>
+                The strap of a Rolex watch is crafted from premium materials such as stainless steel, alligator leather, or ceramic. It offers a perfect blend of durability and elegance, designed to provide a comfortable fit while enhancing the watch’s luxurious appearance.
+            </p>
+        </div>
+    </section>
+</div>
+
+<div id="bezels-group" class="component-group hidden-section">
+    <section class="top-section">
+        <img src="bezel.png" class="full-strap-img" alt="Rolex Watch Bezels">
+        <div class="strap-labels">
+            <span>Plain </span>
+            <span>Decorative</span>
+            <span>Fluted</span>
+            <span>Ceramic</span>
+            <span>Rotating</span>
+        </div>
+    </section>
+
+    <section class="bottom-section">
+        <div class="content">
+            <h1>Different Types of Bezel</h1>
+            <p>
+                The bezel surrounds the watch face and can be made from materials like stainless steel, gold, or ceramic. It often features engraved markings, scales, or a smooth finish, serving both aesthetic and functional purposes, such as measuring elapsed time or providing a decorative frame.
+            </p>
+        </div>
+    </section>
+</div>
+
+<div id="markers-group" class="component-group hidden-section">
+    <section class="top-section">
+        <img src="markers.png" class="full-strap-img" alt="Rolex Watch Markers">
+        <div class="strap-labels">
+            <span>Stick </span>
+            <span>Diamond</span>
+            <span>Roman Numerals</span>
+            <span>Arabic Numerals</span>
+            <span>Arrow</span>
+        </div>
+    </section>
+
+    <section class="bottom-section">
+        <div class="content">
+            <h1>Different Types of Markers</h1>
+            <p>
+                The indices are the hour markers on the dial, which can be simple batons, numerals, or luminous dots. They are designed to improve readability and add to the watch’s overall style, often coated with luminous material for visibility in darkness.        </p>
+        </div>
+    </section>
+</div>
+
+<script>
+    function showComponent(type) {
+        const strapGroup = document.getElementById('straps-group');
+        const bezelGroup = document.getElementById('bezels-group');
+        const markerGroup = document.getElementById('markers-group');
+        const btnStraps = document.getElementById('btn-straps');
+        const btnBezels = document.getElementById('btn-bezels');
+        const btnMarkers = document.getElementById('btn-markers');
+
+        [strapGroup, bezelGroup, markerGroup].forEach(group => group.classList.add('hidden-section'));
+        [btnStraps, btnBezels, btnMarkers].forEach(btn => btn.classList.remove('active-btn'));
+
+        if (type === 'bezels') {
+            bezelGroup.classList.remove('hidden-section');
+            btnBezels.classList.add('active-btn');
+        } else if (type === 'markers') {
+            markerGroup.classList.remove('hidden-section');
+            btnMarkers.classList.add('active-btn');
+        } else { 
+            strapGroup.classList.remove('hidden-section');
+            btnStraps.classList.add('active-btn');
+        }
+    }
+
+    function handleHash() {
+        const hash = window.location.hash.substring(1); // Remove '#'
+        if (hash === 'bezels') showComponent('bezels');
+        else if (hash === 'markers') showComponent('markers');
+        else showComponent('straps'); // Default
+    }
+
+    window.addEventListener('DOMContentLoaded', handleHash);
+
+    window.addEventListener('hashchange', handleHash);
+</script>
+
+</body>
+</html>

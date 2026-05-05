@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<head>
+    <title>Log-In | The Timepiece Vault</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <div class="card">
+        <h2>Log-In</h2>
+        <div class="toggle">
+            <button class="toggle-btn active">User</button>
+            <button class="toggle-btn">Admin</button>
+            <div class="slider"></div>
+        </div>
+        <form id="login-form">
+            <div class="input-row">
+                <input type="text" placeholder="First Name" required>
+                <input type="text" placeholder="Last Name" required>
+            </div>
+            <input type="Email" placeholder="Email" required>
+            <button type="submit" class="main-btn">Login</button>
+            <p style="position: absolute; bottom: 15px; left: 0; width: 100%; text-align: center; font-size: 11px; opacity: 0.5;">
+                By logging in, you agree to our Terms of Agreement
+            </p>
+        </form>
+
+        <div id="admin-verify" style="display: none;">
+            <div id="admin-step-1">
+                <p style="text-align: center; margin-bottom: 15px; font-size: 14px; opacity: 0.8;">Enter 6-digit Admin Access Code</p>
+                <div class="pin-container">
+                    <input type="text" class="pin-input" maxlength="1">
+                    <input type="text" class="pin-input" maxlength="1">
+                    <input type="text" class="pin-input" maxlength="1">
+                    <input type="text" class="pin-input" maxlength="1">
+                    <input type="text" class="pin-input" maxlength="1">
+                    <input type="text" class="pin-input" maxlength="1">
+                </div>
+            </div>
+            <div id="admin-step-2" style="display: none;">
+                <div class="input-row">
+                    <input type="text" id="admin-name" class="admin-input" placeholder="First Name">
+                    <input type="text" id="admin-lname" class="admin-input" placeholder="Last Name">
+                </div>
+                <input type="password" id="admin-pass" class="admin-input" placeholder="Password">
+            </div>
+            <button type="button" class="main-btn" id="verify-btn">Verify Access</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const redirectPath = urlParams.get('redirect') || 'watches.html';
+
+            const toggleBtns = document.querySelectorAll('.toggle-btn');
+            const userBtn = toggleBtns[0];
+            const adminBtn = toggleBtns[1];
+            const slider = document.querySelector('.slider');
+            const card = document.querySelector('.card');
+            const loginForm = document.getElementById('login-form');
+            const adminVerify = document.getElementById('admin-verify');
+            const pinInputs = document.querySelectorAll('.pin-input');
+            const verifyBtn = document.getElementById('verify-btn');
+            let attempts = 0;
+            let isLocked = false;
+            let adminStep = 1;
+
+            pinInputs.forEach((input, index) => {
+                input.addEventListener('input', (e) => {
+                    if (e.target.value && index < pinInputs.length - 1) {
+                        pinInputs[index + 1].focus();
+                    }
+                });
+
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                        pinInputs[index - 1].focus();
+                    }
+                });
+            });
+
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                window.location.href = redirectPath;
+            });
+
+            adminBtn.addEventListener('click', () => {
+                slider.style.left = "50%";
+                adminBtn.classList.add('active');
+                userBtn.classList.remove('active');
+                loginForm.style.display = 'none';
+                adminVerify.style.display = 'block';
+                adminStep = 1;
+                document.getElementById('admin-step-1').style.display = 'block';
+                document.getElementById('admin-step-2').style.display = 'none';
+                document.querySelector('h2').innerText = "Verify Code";
+                verifyBtn.innerText = "Verify Access";
+                pinInputs[0].focus();
+            });
+
+            userBtn.addEventListener('click', () => {
+                slider.style.left = "0%";
+                userBtn.classList.add('active');
+                adminBtn.classList.remove('active');
+                loginForm.style.display = 'block';
+                adminVerify.style.display = 'none';
+                document.querySelector('h2').innerText = "Log-In";
+            });
+
+            verifyBtn.addEventListener('click', () => {
+                if (isLocked) return;
+
+                if (adminStep === 1) {
+                    const pin = Array.from(pinInputs).map(i => i.value).join('');
+                    if (pin === "123456") {
+                        adminStep = 2;
+                        document.getElementById('admin-step-1').style.display = 'none';
+                        document.getElementById('admin-step-2').style.display = 'block';
+                        document.querySelector('h2').innerText = "Admin Access";
+                        verifyBtn.innerText = "Login as Admin";
+                        attempts = 0;
+                        document.getElementById('admin-name').focus();
+                        return;
+                    }
+                } else {
+                    const name = document.getElementById('admin-name').value;
+                    const lname = document.getElementById('admin-lname').value;
+                    const pass = document.getElementById('admin-pass').value;
+                    if (pass === "123456" && name.trim() !== "" && lname.trim() !== "") {
+                        window.location.href = redirectPath;
+                        return;
+                    }
+                }
+
+
+                attempts++;
+                if (attempts >= 5) {
+                    isLocked = true;
+                    let timeLeft = 30;
+                    verifyBtn.disabled = true;
+                    const activeInputs = adminStep === 1 ? pinInputs : [document.getElementById('admin-name'), document.getElementById('admin-lname'), document.getElementById('admin-pass')];
+                    activeInputs.forEach(i => i.disabled = true);
+
+                    const countdown = setInterval(() => {
+                        timeLeft--;
+                        verifyBtn.innerText = `Locked (${timeLeft}s)`;
+                        if (timeLeft <= 0) {
+                            clearInterval(countdown);
+                            isLocked = false;
+                            attempts = 0;
+                            verifyBtn.disabled = false;
+                            verifyBtn.innerText = adminStep === 1 ? "Verify Access" : "Login as Admin";
+                            activeInputs.forEach(i => i.disabled = false);
+                            activeInputs[0].focus();
+                        }
+                    }, 1000);
+                }
+
+                card.classList.add('error-shake');
+                if (adminStep === 1) {
+                    pinInputs.forEach(i => { i.style.borderColor = '#ff4b2b'; i.value = ''; });
+                    pinInputs[0].focus();
+                } else {
+                    const nameIn = document.getElementById('admin-name');
+                    const lnameIn = document.getElementById('admin-lname');
+                    const passIn = document.getElementById('admin-pass');
+                    nameIn.style.borderColor = lnameIn.style.borderColor = passIn.style.borderColor = '#ff4b2b';
+                    nameIn.value = lnameIn.value = passIn.value = '';
+                    nameIn.focus();
+                }
+                
+                setTimeout(() => {
+                    card.classList.remove('error-shake');
+                    if (adminStep === 1) {
+                        pinInputs.forEach(i => i.style.borderColor = 'rgba(255,255,255,0.2)');
+                    } else {
+                        document.getElementById('admin-name').style.borderColor = 
+                        document.getElementById('admin-lname').style.borderColor = 
+                        document.getElementById('admin-pass').style.borderColor = 'rgba(255,255,255,0.2)';
+                    }
+                }, 500);
+            });
+        });
+    </script>
+</body>
+</html>
